@@ -1,19 +1,15 @@
-let UserModel = require('../models/users');
-
-module.exports.jesseFunction = function(req, res, next) {
-    res.send('Hello Jesse');
-}
+let ContactModel = require('../models/contacts');
 
 module.exports.create = async function(req, res, next) {
     try {
         console.log(req.body);
-        let newUser = new UserModel(req.body);
-        console.log(newUser);
-        let result = await UserModel.create(newUser);
-        console.log(result);
+        let newContact = new ContactModel(req.body);
+        console.log(newContact);
+        let result = await ContactModel.create(newContact);
         res.json({
             success:true,
-            message:'User created successfully.',
+            message:'Contact created successfully.',
+            
         })
         
     } catch (error) {
@@ -21,10 +17,9 @@ module.exports.create = async function(req, res, next) {
         next(error);
     }
 }
-
 module.exports.list = async function(req, res, next) {
     try {
-        let list = await UserModel.find({},'-password');
+        let list = await ContactModel.find({});
         res.json(list);
     } catch (error) {
         console.log(error);
@@ -32,79 +27,76 @@ module.exports.list = async function(req, res, next) {
     }
 }
 
-module.exports.userGet = async function(req, res, next) {
+module.exports.contactGet = async function(req, res, next) {
     try {
-        let uID = req.params.userID;
-        const user = await UserModel.findOne({ _id: uID }, '-password');
+        let uID = req.params.id;
+        const user = await ContactModel.findOne({ _id: uID });
+
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(404).json({ success: false, message: "Contact not found" });
         }
+
         res.json({ success: true, data: user });
     } catch (error) {
         console.log(error);
         next(error);
     }
-};
-module.exports.userByID = async function(req, res, next) {
-   res,json(req.user);
 }
+module.exports.contactByID = async function(req, res, next) {
+   res,json(req.user);
+};
 
 
 module.exports.update = async function(req, res, next) {
-    
-        
     try {
-        let uID = req.params.userID;
+        let uID = req.params.id;
 
         
         if (req.body._id) {
             delete req.body._id;
         }
 
-        
-        let result = await UserModel.updateOne(
+      
+        let updatedContact = await ContactModel.findOneAndUpdate(
             { _id: uID },
-            { $set: req.body }
+            { $set: req.body },
+            { new: true, runValidators: true }
         );
 
-        console.log(result);
-
-        if (result.modifiedCount > 0) {
+        if (updatedContact) {
             res.json({
                 success: true,
-                message: 'User updated successfully.'
+                message: 'Contact updated successfully.',
+                data: updatedContact
             });
         } else {
-            
             return res.status(404).json({
                 success: false,
-                message: 'User not updated. Are you sure it exists?'
+                message: 'Contact not updated. Are you sure it exists?'
             });
         }
-
     } catch (error) {
         console.log(error);
         next(error);
     }
-};   
+}
 
 module.exports.remove = async function(req, res, next) {
     try {
-        let uID = req.params.userID;
+        let uID = req.params.id;
         
-        let result = await UserModel.deleteOne({_id:uID});
+        let result = await ContactModel.deleteOne({_id:uID});
         console.log(result);
-
         if(result.deletedCount >0){
             res.json({
                 success:true,
-                message:'User deleted successfully.',
+                message:'Contact deleted successfully.',
             });
         }else{
             
             return res.status(404).json({
                 success: false,
-                message: 'User not deleted. Are you sure it exists?'
+                message: 'Contact not deleted. Are you sure it exists?'
             });
         }
         

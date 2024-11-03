@@ -9,9 +9,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/jesse',usersController.jesseFunction);
-router.post('/create',usersController.create);
-router.get('/list',usersController.list);
-router.get('/get/:userID',usersController.userGet,usersController.userByID);
-router.put('/edit/:userID',usersController.update);
-router.put('/delete/:userID',usersController.remove);
+router.post('/',usersController.create);
+router.get('/',usersController.list);
+router.get('/:userID',usersController.userGet,usersController.userByID);
+router.get('/:userID', usersController.userGet);
+router.put('/:userID',usersController.update);
+router.delete('/:userID',usersController.remove);
 module.exports = router;
